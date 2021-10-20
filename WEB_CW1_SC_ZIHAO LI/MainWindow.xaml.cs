@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using CefSharp.Wpf;
+using System.Net;
 
 namespace WEB_CW1_SC_ZIHAO_LI
 {
