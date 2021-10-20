@@ -74,16 +74,27 @@
 
             <Button Content="H" Grid.Column="5" Width="40px" Height="30px" BorderThickness="0" Foreground="Black" FontSize="15" Click="History_Click" x:Name="HistoryButton">
                 <Button.ContextMenu>
-                    <ContextMenu x:Name="HistoryMenu"></ContextMenu>
+                    <ContextMenu Width="300px" x:Name="HistoryMenu"></ContextMenu>
                 </Button.ContextMenu>
 
             </Button>
 
         </Grid>
+        <Grid Grid.Row="1">
+ 
+            
+         
+
+            <ScrollViewer HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="auto" Height="auto" >
+                <TextBlock Width="auto" x:Name="HTML_show"  FontSize="20" TextWrapping="Wrap" >asd</TextBlock>
+            </ScrollViewer>
+            
 
 
-             <cefSharp:ChromiumWebBrowser Grid.Row="1" x:Name="Chrome" Address="www.google.com"></cefSharp:ChromiumWebBrowser> 
-
+            <!--
+            <cefSharp:ChromiumWebBrowser Grid.Row="1" x:Name="Chrome" Address="www.google.com"></cefSharp:ChromiumWebBrowser> 
+               -->
+        </Grid>
     </Grid>
 
 </Window>

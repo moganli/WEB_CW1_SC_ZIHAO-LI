@@ -13,7 +13,10 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using CefSharp.Wpf;
+using CefSharp;
 using System.Net;
+using System.IO;
+using System.Collections.Specialized;
 
 namespace WEB_CW1_SC_ZIHAO_LI
 {
@@ -22,8 +25,8 @@ namespace WEB_CW1_SC_ZIHAO_LI
     /// </summary>
     public partial class MainWindow : Window
     {
-        string HomePage = "https://www2.macs.hw.ac.uk/~yw2007/";
-        string defaultPage = "www.google.com";
+        string HomePage = "https://www2.macs.hw.ac.uk/~zl2013/";
+        string defaultPage = "https://www.google.com";
         List<string> WebPage;
         int Current = 0;
 
@@ -33,16 +36,52 @@ namespace WEB_CW1_SC_ZIHAO_LI
         }
 
 
+        public string GetHttpResponse(string url, int Timeout)
+        {
+            //url = "www.baidu.com";
+            HttpWebRequest request;
+            try
+            {
+
+
+                request = (HttpWebRequest)WebRequest.Create(url);
+                request.Method = "GET";
+                request.ContentType = "text/html;charset=UTF-8";
+                request.UserAgent = null;
+                request.Timeout = Timeout;
+                int statusCode;
+                HttpWebResponse response = null;
+
+                response = (HttpWebResponse)request.GetResponse();
+                Stream myResponseStream = response.GetResponseStream();
+                StreamReader myStreamReader = new StreamReader(myResponseStream, Encoding.GetEncoding("utf-8"));
+                string retString = myStreamReader.ReadToEnd();
+                myStreamReader.Close();
+                myResponseStream.Close();
+                Console.WriteLine(retString);
+                HTML_show.Text = retString;
+                return retString;
+            }
+            catch (Exception)
+            {
+                
+                return "GET requext fail";
+            }
+           
+
+        }
+
 
         void loadWebPages(string link, bool saveToHistory = true)
         {
-            Chrome.Address = link;
+            GetHttpResponse(link,5000);
+            //Chrome.Address = link;
             addrsBar.Text = link;
 
             MenuItem historyItem = new MenuItem();
             historyItem.Click += HistoryItem_Click;
             historyItem.Header = link;
-            historyItem.Width = 150;
+            historyItem.Width = 280;
 
             HistoryMenu.Items.Add(historyItem);
 
@@ -68,7 +107,6 @@ namespace WEB_CW1_SC_ZIHAO_LI
             {
                 Current--;
                 loadWebPages(WebPage[Current], false);
-                Chrome.CanGoBack.ToString();
             }
             else
             {
@@ -92,8 +130,8 @@ namespace WEB_CW1_SC_ZIHAO_LI
 
         private void reFresh(object sender, RoutedEventArgs e)
         {
-            loadWebPages(WebPage[Current], false);
-
+            // loadWebPages(WebPage[Current], false);
+            loadWebPages(addrsBar.Text,true); 
         }
 
 
@@ -121,7 +159,7 @@ namespace WEB_CW1_SC_ZIHAO_LI
             {
                 HistoryMenu.PlacementTarget = HistoryButton;
                 HistoryMenu.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom;
-                //HistoryMenu.HorizontalOffset = -10;
+                HistoryMenu.HorizontalOffset = -10;
                 HistoryMenu.IsOpen = true;
             }
         }
