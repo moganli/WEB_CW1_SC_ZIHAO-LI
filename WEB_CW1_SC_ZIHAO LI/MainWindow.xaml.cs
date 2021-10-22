@@ -17,6 +17,7 @@ using CefSharp;
 using System.Net;
 using System.IO;
 using System.Collections.Specialized;
+using System.Text.RegularExpressions;
 
 namespace WEB_CW1_SC_ZIHAO_LI
 {
@@ -33,22 +34,138 @@ namespace WEB_CW1_SC_ZIHAO_LI
         public MainWindow()
         {
             InitializeComponent();
+            this.Title ="morgan's browser";
         }
 
 
 
-        public void GetHttpResponse(string url, int Timeout)
+
+        private String getWebTitle(String url)
+        {
+            WebRequest wb;
+            if (url.Contains("https://"))
+            {
+                 wb = WebRequest.Create(url.Trim());
+            }
+            //WebRequest wb = WebRequest.Create(url.Trim());
+            else
+            {
+                 wb = WebRequest.Create("https://" + url.Trim());
+            }
+
+            WebResponse webRes = null;
+
+            Stream webStream = null;
+            try
+            {
+                webRes = wb.GetResponse();
+                webStream = webRes.GetResponseStream();
+            }
+            catch (Exception e)
+            {
+                string stCode = Regex.Replace(e.Message, @"[^0-9]+", "");
+                if (stCode == null)
+                {
+                    return "wrong url";
+                }
+
+                //int statusCodeINT = Convert.ToInt32(stCode);
+                
+                string statusCodeText;
+
+                switch (stCode)
+                {
+                    case "400":
+                        statusCodeText = "400 bad request";
+                        break;
+                    case "403":
+                        statusCodeText = "403 forbidden";
+                        break;
+                    case "404":
+                        statusCodeText = "403 notfound";
+                        break;
+                    default:
+                        statusCodeText = e.Message;
+                        break;
+                }
+
+
+                return "statusCode:"+statusCodeText;
+            }
+
+            StreamReader sr = new StreamReader(webStream, Encoding.Default);
+
+            StringBuilder sb = new StringBuilder();
+
+            String str = "";
+            while ((str = sr.ReadLine()) != null)
+            {
+                sb.Append(str);
+            }
+
+            String regex = @"<title>.+</title>";
+
+            String title = Regex.Match(sb.ToString(), regex).ToString();
+            title = Regex.Replace(title, @"[\""]+", "");
+            title = Regex.Replace(title, @"<title>", "");
+            title = Regex.Replace(title, @"</title>", "");
+
+            string statusCode=GetHttpResponse(url);
+            string statusCodeNUMBER = Regex.Replace(statusCode, @"[^0-9]+", "");
+
+         /*   int statusCodeINT = Convert.ToInt32(statusCodeNUMBER);
+            string statusCodeText;
+
+            switch (statusCodeINT)
+                {
+                case 400:
+                    statusCodeText = "400 bad request";
+                    break;
+                case 403:
+                    statusCodeText = "403 forbidden";
+                    break;
+                case 404:
+                    statusCodeText = "403 notfound";
+                    break;
+                default:
+                    statusCodeText = statusCode;
+                    break;
+            }*/
+
+            title = title + "                   statusCode:"+ statusCodeNUMBER;
+
+            return title;
+        }
+
+
+
+
+        public string GetHttpResponse(string url, int Timeout=5000)
         {
             //url = "www.baidu.com";
             HttpWebRequest request;
             try
             {
+                if (url.Contains("https://"))
+                {
+                    request = (HttpWebRequest)WebRequest.Create(url);
+                    request.Method = "GET";
+                    request.ContentType = "text/html;charset=UTF-8";
+                    request.UserAgent = null;
+                    request.Timeout = Timeout;
+                }
+                //WebRequest wb = WebRequest.Create(url.Trim());
+                else
+                {
+                   
+                    request = (HttpWebRequest)WebRequest.Create("https://" + url);
+                    request.Method = "GET";
+                    request.ContentType = "text/html;charset=UTF-8";
+                    request.UserAgent = null;
+                    request.Timeout = Timeout;
+                }
 
-                request = (HttpWebRequest)WebRequest.Create(url);
-                request.Method = "GET";
-                request.ContentType = "text/html;charset=UTF-8";
-                request.UserAgent = null;
-                request.Timeout = Timeout;
+             
                 
                 HttpWebResponse response = null;
 
@@ -56,31 +173,9 @@ namespace WEB_CW1_SC_ZIHAO_LI
 
                 int statusCode = Convert.ToInt32(response.StatusCode);
                 string statusCodeText = null;
-                if (statusCode != 200)
-                {
-                    switch (statusCode)
-                    {
-                        case 400:
-                            statusCodeText = "400 bad request";
-                            break;
-                        case 403:
-                            statusCodeText = "403 forbidden";
-                            break;
-                        case 404:
-                            statusCodeText = "403 notfound";
-                            break;
-                        default:
-                            statusCodeText = "other status,pls check url";
-                            break;
-                    }
-                }
-                else
-                {
-                    statusCodeText = "200 status OK！";
-                }
 
-
-
+                statusCodeText = "200 status OK！";
+                
 
                 Stream myResponseStream = response.GetResponseStream();
                 StreamReader myStreamReader = new StreamReader(myResponseStream, Encoding.GetEncoding("utf-8"));
@@ -91,15 +186,16 @@ namespace WEB_CW1_SC_ZIHAO_LI
                 statusCodeText_show.Text = statusCodeText;
                 HTML_show.Text = retString;
               
-               // return retString;
+                return statusCodeText;
             }
             catch (WebException e)
             {
                 
-                //return "GET requext fail";
+             
                 statusCodeText_show.Text = e.Message;
 
                 HTML_show.Text = "/≥﹏≤ \\";
+                return e.Message;
                 // return "GET requext fail";
 
             }
@@ -110,7 +206,8 @@ namespace WEB_CW1_SC_ZIHAO_LI
 
         void loadWebPages(string link, bool saveToHistory = true)
         {
-            GetHttpResponse(link,5000);
+            this.Title = getWebTitle(link);
+            GetHttpResponse(link);
             //Chrome.Address = link;
             addrsBar.Text = link;
 
@@ -183,6 +280,10 @@ namespace WEB_CW1_SC_ZIHAO_LI
             loadWebPages(defaultPage);
 
         }
+
+
+
+
 
         private void HistoryItem_Click(object sender, RoutedEventArgs e)
         {

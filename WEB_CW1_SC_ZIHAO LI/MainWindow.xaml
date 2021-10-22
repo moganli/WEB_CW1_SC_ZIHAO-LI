@@ -7,7 +7,7 @@
         xmlns:local="clr-namespace:WEB_CW1_SC_ZIHAO_LI"
         xmlns:cefSharp="clr-namespace:CefSharp.Wpf;assembly=CefSharp.Wpf"
         mc:Ignorable="d"
-        Title="morome" Height="500" Width="800" Loaded="window_loaded">
+        Title="morgan's browser" Height="500" Width="800" Loaded="window_loaded">
 
     <!--
     <Grid>
@@ -87,7 +87,7 @@
             
 
             <Border BorderThickness="0.5" BorderBrush="Gray">
-                <TextBlock TextAlignment="Center" Height="20PX" x:Name="statusCodeText_show" FontSize="20" TextWrapping="Wrap"></TextBlock>
+                <TextBlock TextAlignment="Center" Height="30PX" x:Name="statusCodeText_show" FontSize="20" TextWrapping="Wrap"></TextBlock>
             </Border>
         </Grid>
 
