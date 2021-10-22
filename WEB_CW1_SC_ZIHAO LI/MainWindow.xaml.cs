@@ -36,38 +36,74 @@ namespace WEB_CW1_SC_ZIHAO_LI
         }
 
 
-        public string GetHttpResponse(string url, int Timeout)
+
+        public void GetHttpResponse(string url, int Timeout)
         {
             //url = "www.baidu.com";
             HttpWebRequest request;
             try
             {
 
-
                 request = (HttpWebRequest)WebRequest.Create(url);
                 request.Method = "GET";
                 request.ContentType = "text/html;charset=UTF-8";
                 request.UserAgent = null;
                 request.Timeout = Timeout;
-                int statusCode;
+                
                 HttpWebResponse response = null;
 
                 response = (HttpWebResponse)request.GetResponse();
+
+                int statusCode = Convert.ToInt32(response.StatusCode);
+                string statusCodeText = null;
+                if (statusCode != 200)
+                {
+                    switch (statusCode)
+                    {
+                        case 400:
+                            statusCodeText = "400 bad request";
+                            break;
+                        case 403:
+                            statusCodeText = "403 forbidden";
+                            break;
+                        case 404:
+                            statusCodeText = "403 notfound";
+                            break;
+                        default:
+                            statusCodeText = "other status,pls check url";
+                            break;
+                    }
+                }
+                else
+                {
+                    statusCodeText = "200 status OK！";
+                }
+
+
+
+
                 Stream myResponseStream = response.GetResponseStream();
                 StreamReader myStreamReader = new StreamReader(myResponseStream, Encoding.GetEncoding("utf-8"));
                 string retString = myStreamReader.ReadToEnd();
                 myStreamReader.Close();
                 myResponseStream.Close();
                 Console.WriteLine(retString);
+                statusCodeText_show.Text = statusCodeText;
                 HTML_show.Text = retString;
-                return retString;
+              
+               // return retString;
             }
-            catch (Exception)
+            catch (WebException e)
             {
                 
-                return "GET requext fail";
+                //return "GET requext fail";
+                statusCodeText_show.Text = e.Message;
+
+                HTML_show.Text = "/≥﹏≤ \\";
+                // return "GET requext fail";
+
             }
-           
+
 
         }
 
