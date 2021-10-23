@@ -36,9 +36,16 @@ namespace WEB_CW1_SC_ZIHAO_LI
         {
             InitializeComponent();
             this.Title ="morgan's browser";
+            
         }
 
-
+        private void window_loaded(object sender, RoutedEventArgs e)
+        {
+            WebPage = new List<string>();
+            loadWebPages(defaultPage);
+            readHistory();
+            readFavorites();
+        }
 
 
         private String getWebTitle(String url)
@@ -217,6 +224,7 @@ namespace WEB_CW1_SC_ZIHAO_LI
 
             HistoryMenu.Items.Add(historyItem);
             writeTxtHistory(link);
+            //readHistory();
 
             if (saveToHistory)
             {
@@ -268,46 +276,10 @@ namespace WEB_CW1_SC_ZIHAO_LI
         }
 
 
-
         private void home(object sender, RoutedEventArgs e)
         {
             loadWebPages(readHomePage());
         }
-
-        private void window_loaded(object sender, RoutedEventArgs e)
-        {
-            WebPage = new List<string>();
-            loadWebPages(defaultPage);
-
-        }
-
-
-        private void HistoryItem_Click(object sender, RoutedEventArgs e)
-        {
-            MenuItem historyItem = (MenuItem)sender;
-            loadWebPages(historyItem.Header.ToString());
-        }
-        private void History_Click(object sender, RoutedEventArgs e)
-        {
-            if (WebPage.Count != 0)
-            {
-                HistoryMenu.PlacementTarget = HistoryButton;//init position at button
-                HistoryMenu.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom;
-                HistoryMenu.HorizontalOffset = -10;
-                HistoryMenu.IsOpen = true;
-            }
-
-        }
-
-
-        //home page setting
-        //public void homePageSet_KeyDown(object sender, KeyEventArgs e)
-        //{
-
-        //   string hPurl= homePageSet.Text;
-        //   writeTxtHomePage(hPurl);
-
-        //}
 
         private void HomePageSet(object sender, RoutedEventArgs e)
         {
@@ -351,6 +323,7 @@ namespace WEB_CW1_SC_ZIHAO_LI
                 string lines = File.ReadAllText("HomePage.txt", Encoding.Default);
                 return lines;
 
+
             }
             else
             {
@@ -361,9 +334,41 @@ namespace WEB_CW1_SC_ZIHAO_LI
 
 
 
+        private void HistoryItem_Click(object sender, RoutedEventArgs e)
+        {
+            MenuItem historyItem = (MenuItem)sender;
+            loadWebPages(historyItem.Header.ToString());
+        }
+        private void History_Click(object sender, RoutedEventArgs e)
+        {
 
 
-        public void writeTxtHistory(string hPurl)
+            if (WebPage.Count != 0)
+            {
+                HistoryMenu.PlacementTarget = HistoryButton;//init position at button
+                HistoryMenu.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom;
+                HistoryMenu.HorizontalOffset = -10;
+                HistoryMenu.IsOpen = true;
+            }
+        }
+
+        private void HistoryButton_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            
+            if (File.Exists("History.txt"))
+            {
+                File.Delete("History.txt");
+                MessageBox.Show("history deleted");
+            }
+            
+        }
+
+            //home page setting
+
+
+
+
+        public  void writeTxtHistory(string hPurl)
         {            //判断是否已经有了这个文件
             if (!File.Exists("History.txt"))
             {
@@ -378,29 +383,45 @@ namespace WEB_CW1_SC_ZIHAO_LI
             }
             else
             {
-                FileStream fs = new FileStream("History.txt", FileMode.Open, FileAccess.Write);
-                File.SetAttributes(@"History.txt", FileAttributes.Normal);
-                StreamWriter sr = new StreamWriter(fs);
-                sr.WriteLine(hPurl.Trim());//开始写入值
-                sr.Close();
-                fs.Close();
+
+                using (StreamWriter outputFile = new StreamWriter( "History.txt",true))
+                {
+                    outputFile.WriteLine(hPurl);
+                }
 
             }
 
         }
 
-        public string readHistory()
+        public void readHistory()
         {
-
+            var count = 0;
             if (File.Exists("History.txt"))
             {
-                string lines = File.ReadAllText("HomePageHistorytxt", Encoding.Default);
-                return lines;
+                //string lines = File.ReadAllText("History.txt", Encoding.Default);
+                // return lines;
 
+                string lines;
+                using(StreamReader reader = new StreamReader("History.txt"))
+                {
+
+                    while ((lines = reader.ReadLine()) != null)
+                    {
+                        MenuItem historyItem = new MenuItem();
+                        historyItem.Click += HistoryItem_Click;
+                        historyItem.Header = lines;
+                        historyItem.Width = 280;
+                        HistoryMenu.Items.Add(historyItem);
+                        count++;
+                    }
+                }
+
+                //HistoryMenu.Items.Add(lines);
+               
             }
             else
             {
-                return HomePage;
+                
             }
         }
 
@@ -411,68 +432,28 @@ namespace WEB_CW1_SC_ZIHAO_LI
             //string aFtitle = getWebTitle(addrsBar.Text);
             //addFavoritesXml( aFurl);
             MenuItem FavoritesItem = new MenuItem();
-            FavoritesItem.Click += FavoritesItem_Click;
+            FavoritesItem.PreviewMouseLeftButtonDown += FavoritesItem_Click;
+            FavoritesItem.PreviewMouseRightButtonDown += FavoritesItem_MouseRightButtonDown;
             FavoritesItem.Header = aFurl;
             FavoritesItem.Width = 280;
 
             FavoritesMenu.Items.Add(FavoritesItem);
+            writeTxtFavorites(aFurl);
 
-            MessageBox.Show("add success :" + aFurl);
+
+            //MessageBox.Show("add Favorites success :" + aFurl);
 
         }
 
 
-        //public static void CreateXmlFile( string u)
-        //{
-        //    XmlDocument doc = new XmlDocument();
-        //    //2、创建第一行描述信息
-        //    XmlDeclaration dec = doc.CreateXmlDeclaration("1.0", "utf-8", null);
-        //    //3、将创建的第一行描述信息添加到文档中
-        //    doc.AppendChild(dec);
-        //    //4、给文档添加根节点
-        //    XmlElement item = doc.CreateElement("item");
-        //    doc.AppendChild(item);
 
-
-        //    XmlElement url = doc.CreateElement("url");
-        //    url.InnerText = u;
-        //    item.AppendChild(url);
-
-
-
-        //    doc.Save("Favorites.xml");
-        //    //Console.WriteLine("保存成功！");
-        //   // Console.ReadKey();
-        //}
-
-        //public static void addFavoritesXml( string u)
-        //{
-        //    XmlDocument doc = new XmlDocument();
-        //    
-        //    if (File.Exists("Favorites.xml"))
-        //    {
-        //        
-        //        doc.Load("Favorites.xml");
-        //        
-        //        XmlElement item = doc.DocumentElement;
-
-        //        XmlElement url = doc.CreateElement("url");
-        //        url.InnerText = u;
-        //        item.AppendChild(url);
-        //        doc.Save("Favorites.xml");
-        //    }
-        //    else
-        //    {
-        //        CreateXmlFile(u);
-        //    }
-            
-        //    //Console.WriteLine("Favorites.xml success");
-        //}
-
-        private void FavoritesItem_Click(object sender, RoutedEventArgs e)
+        //string favoritesItem;
+        public void FavoritesItem_Click(object sender, RoutedEventArgs e)
         {
             MenuItem FavoritesItem = (MenuItem)sender;
             loadWebPages(FavoritesItem.Header.ToString());
+            //favoritesItem = FavoritesItem.Header.ToString();
+
         }
         private void Favorites_Click(object sender, RoutedEventArgs e)
         {
@@ -486,38 +467,116 @@ namespace WEB_CW1_SC_ZIHAO_LI
 
         }
 
+        public void writeTxtFavorites(string hPurl)
+        {            //判断是否已经有了这个文件
+            if (!File.Exists("Favorites.txt"))
+            {
+                //没有则创建这个文件
+                FileStream fs1 = new FileStream("Favorites.txt", FileMode.Create, FileAccess.Write);//创建写入文件                /
+                File.SetAttributes(@"Favorites.txt", FileAttributes.Normal);
+                StreamWriter sw = new StreamWriter(fs1);
+                sw.WriteLine(hPurl.Trim());//开始写入值
+                sw.Close();
+                fs1.Close();
 
-        //public  void readXml()
-        //{
-        //    if (File.Exists("Favorites.xml"))
-        //    {
-        //        XmlDocument doc = new XmlDocument();
-        //        doc.Load("Favorites.xml");
-        //        
-        //        XmlElement itemElement = doc.DocumentElement;
-        //        XmlNodeList orderChildr = itemElement.ChildNodes;
-        //        foreach (XmlNode item in orderChildr)
-        //        {
-        //            FavoritesMenu.Items.Add(item.InnerText);
-        //            //item.InnerText;
-        //        }
-        //        //XmlElement orderitem = orderElement["Items"];
-        //        //XmlNodeList itemlist = orderitem.ChildNodes;
-        //        //foreach (XmlNode item in itemlist)
-        //        //{
-        //        //    Console.WriteLine(item.Attributes["Name"].Value + " " + item.Attributes["Count"].Value);
-        //        //}
-        //    }
-        //    else
-        //    {
-              
-        //            //Console.WriteLine("文件不存在！");
-        //    }
-        //    //Console.ReadKey();
-        //    // doc.Save("Student.xml");
-        //    //Console.WriteLine("Student.xml 保存成功");
-        //}
+            }
+            else
+            {
+                string lines;
+                using (StreamReader reader = new StreamReader("Favorites.txt"))
+                {
 
+                    while ((lines = reader.ReadLine()) != null)
+                    {
+                        if (lines == hPurl)
+                        {
+                            MessageBox.Show("this url already in Favorites ");
+                            return;
+                        }
+                    }
+                }
+
+                    using (StreamWriter outputFile = new StreamWriter("Favorites.txt", true))
+                    {
+                        outputFile.WriteLine(hPurl);
+                     MessageBox.Show("add Favorites success :" + hPurl);
+                }
+
+                
+            }
+
+        }
+
+        public void readFavorites()
+        {
+            
+            if (File.Exists("Favorites.txt"))
+            {
+                //string lines = File.ReadAllText("History.txt", Encoding.Default);
+                // return lines;
+
+                string lines;
+                using (StreamReader reader = new StreamReader("Favorites.txt"))
+                {
+
+                    while ((lines = reader.ReadLine()) != null)
+                    {
+                        MenuItem FavoritesItem = new MenuItem();
+                        FavoritesItem.PreviewMouseLeftButtonDown += FavoritesItem_Click;
+                        FavoritesItem.PreviewMouseRightButtonDown += FavoritesItem_MouseRightButtonDown;
+                        FavoritesItem.Header = lines;
+                        FavoritesItem.Width = 280;
+
+                        FavoritesMenu.Items.Add(FavoritesItem);
+
+
+                    }
+                }
+
+                //HistoryMenu.Items.Add(lines);
+
+            }
+            else
+            {
+
+            }
+        }
+
+        public void FavoritesItem_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            MenuItem FavoritesItem = (MenuItem)sender;
+            string deleteurl = FavoritesItem.Header.ToString();
+
+
+            //定义一个变量用来存读到的东西
+            string text = "";
+            //用一个读出流去读里面的数据
+            using (StreamReader reader = new StreamReader("Favorites.txt"))
+            {
+                //读一行
+                string line = reader.ReadLine();
+                while (line != null)
+                {
+                    //如果这一行里面有abe这三个字符，就不加入到text中，如果没有就加入
+                    if (line.IndexOf(deleteurl) >= 0)
+                    {
+                    }
+                    else
+                    {
+                        text += line + "\r\n";
+                    }
+                    //一行一行读
+                    line = reader.ReadLine();
+                }
+            }
+            //定义一个写入流，将值写入到里面去
+            using (StreamWriter writer = new StreamWriter("Favorites.txt"))
+            {
+                writer.Write(text);
+            }
+
+
+        }
 
 
 
