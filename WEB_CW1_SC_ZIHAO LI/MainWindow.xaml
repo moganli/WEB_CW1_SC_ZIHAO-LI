@@ -15,7 +15,6 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="30"></RowDefinition>
             <RowDefinition Height="30"></RowDefinition>
-
             <RowDefinition Height="*"></RowDefinition>
 
         </Grid.RowDefinitions>
@@ -47,25 +46,34 @@
             </Button>
             <Button Content="⏱️" Grid.Column="8" Height="28px" MouseRightButtonDown="HistoryButton_MouseRightButtonDown" BorderThickness="0" Foreground="Black" FontSize="15" Click="History_Click" x:Name="HistoryButton">
                 <Button.ContextMenu>
-                     <ContextMenu Width="300px" x:Name="HistoryMenu"></ContextMenu>
+                    <ContextMenu Width="300px" x:Name="HistoryMenu"></ContextMenu>
                 </Button.ContextMenu>
             </Button>
 
-            
-            
-            
+
+
+
         </Grid>
 
         <Grid  Grid.Row="1">
-            <Border BorderThickness="0.5" BorderBrush="Gray">
-                <TextBlock TextAlignment="Center" Height="30PX" x:Name="statusCodeText_show" FontSize="20" TextWrapping="Wrap"></TextBlock>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="40"/>
+   
+            </Grid.ColumnDefinitions>
+            <Border Grid.Column="0" BorderThickness="0.5" BorderBrush="Gray">
+                <TextBlock  TextAlignment="Center" Height="30PX" x:Name="statusCodeText_show" FontSize="20" TextWrapping="Wrap" Margin="0,0,42,0"></TextBlock>
+
             </Border>
+
+            <Button Grid.Column="1" Content="⇩" Width="40px" BorderThickness="0" Foreground="Black" FontSize="20" Click="bulk_download" />
+        
         </Grid>
 
-        
-        
-        
-        <Grid Grid.Row="3">
+
+
+
+        <Grid Grid.Row="2">
             <ScrollViewer  HorizontalAlignment="Center" VerticalAlignment="Top" Width="auto" Height="auto" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" >
 
                 <TextBlock  Width="auto" x:Name="HTML_show"  FontSize="20" TextWrapping="Wrap" >waiting for input url</TextBlock>

@@ -59,8 +59,21 @@ namespace WEB_CW1_SC_ZIHAO_LI
             //WebRequest wb = WebRequest.Create(url.Trim());
             else
             {
-                request = (HttpWebRequest)WebRequest.Create("https://" + url.Trim());
+                try
+                {
+                    request = (HttpWebRequest)WebRequest.Create("https://" + url);
+                }
+                catch (Exception e)
+                {
+
+                    HTML_show.Text = e.Message;
+                    request= (HttpWebRequest)WebRequest.Create("https://savanttools.com/ test-http-status-codes");
+                    statusCodeText_show.Text = "404";
+                    return "404";
+                }
+                //request = (HttpWebRequest)WebRequest.Create("https://" + url);
             }
+  
 
             WebResponse webRes = null;
 
@@ -119,40 +132,72 @@ namespace WEB_CW1_SC_ZIHAO_LI
             title = Regex.Replace(title, @"<title>", "");
             title = Regex.Replace(title, @"</title>", "");
 
-            string statusCode=GetHttpResponse(url);
-            string statusCodeNUMBER = Regex.Replace(statusCode, @"[^0-9]+", "");
-
-         /*   int statusCodeINT = Convert.ToInt32(statusCodeNUMBER);
-            string statusCodeText;
-
-            switch (statusCodeINT)
-                {
-                case 400:
-                    statusCodeText = "400 bad request";
-                    break;
-                case 403:
-                    statusCodeText = "403 forbidden";
-                    break;
-                case 404:
-                    statusCodeText = "403 notfound";
-                    break;
-                default:
-                    statusCodeText = statusCode;
-                    break;
-            }*/
-
-            title = title + "       statusCode:"+ statusCodeNUMBER;
-
             return title;
         }
 
 
-
-
-        public string GetHttpResponse(string url, int Timeout=5000)
+        public string GetStatusCode(string url)
         {
+            HttpWebRequest request;
+            try
+            {
+                if (url.Contains("https://"))
+                {
+                    request = (HttpWebRequest)WebRequest.Create(url);
+                    request.Method = "GET";
+                    request.ContentType = "text/html;charset=UTF-8";
+                    request.UserAgent = null;
+                    
+                }
+                //WebRequest wb = WebRequest.Create(url.Trim());
+                else
+                {
+
+                    request = (HttpWebRequest)WebRequest.Create("https://" + url);
+                    request.Method = "GET";
+                    request.ContentType = "text/html;charset=UTF-8";
+                    request.UserAgent = null;
+                    
+                }
+
+                HttpWebResponse response = null;
+
+                response = (HttpWebResponse)request.GetResponse();
+
+                int statusCode = Convert.ToInt32(response.StatusCode);
+                string statusCodeText = null;
+                statusCodeText = "200 status OK！";
+
+                Stream myResponseStream = response.GetResponseStream();
+                StreamReader myStreamReader = new StreamReader(myResponseStream, Encoding.GetEncoding("utf-8"));
+                string retString = myStreamReader.ReadToEnd();
+                myStreamReader.Close();
+                myResponseStream.Close();
+                //Console.WriteLine(retString);
+                //statusCodeText_show.Text = statusCodeText;
+                //HTML_show.Text = retString;
+
+                return statusCodeText;
+            }
+            catch (WebException e)
+            {
+                //statusCodeText_show.Text = e.Message;
+                //HTML_show.Text = "/≥﹏≤ \\";
+                return e.Message;
+                // return "GET requext fail";
+
+            }
+
+
+        }
+    
+    
+
+            public string GetHttpResponse(string url, int Timeout=5000)
+            {
             //url = "www.baidu.com";
             HttpWebRequest request;
+            string statusCodeText = null;
             try
             {
                 if (url.Contains("https://"))
@@ -166,12 +211,24 @@ namespace WEB_CW1_SC_ZIHAO_LI
                 //WebRequest wb = WebRequest.Create(url.Trim());
                 else
                 {
-                   
-                    request = (HttpWebRequest)WebRequest.Create("https://" + url);
-                    request.Method = "GET";
-                    request.ContentType = "text/html;charset=UTF-8";
-                    request.UserAgent = null;
-                    request.Timeout = Timeout;
+                    try
+                    {
+                        request = (HttpWebRequest)WebRequest.Create("https://" + url);
+                        request.Method = "GET";
+                        request.ContentType = "text/html;charset=UTF-8";
+                        request.UserAgent = null;
+                        request.Timeout = Timeout;
+                    }
+                    catch (Exception e)
+                    {
+
+
+                        HTML_show.Text = e.Message;
+                        request = (HttpWebRequest)WebRequest.Create("https://savanttools.com/ test-http-status-codes");
+                        statusCodeText_show.Text= "404";
+                        return "404";
+                    }
+
                 }
 
              
@@ -181,7 +238,7 @@ namespace WEB_CW1_SC_ZIHAO_LI
                 response = (HttpWebResponse)request.GetResponse();
 
                 int statusCode = Convert.ToInt32(response.StatusCode);
-                string statusCodeText = null;
+                
 
                 statusCodeText = "200 status OK！";
                 
@@ -191,11 +248,11 @@ namespace WEB_CW1_SC_ZIHAO_LI
                 string retString = myStreamReader.ReadToEnd();
                 myStreamReader.Close();
                 myResponseStream.Close();
-                Console.WriteLine(retString);
+               // Console.WriteLine(retString);
                 statusCodeText_show.Text = statusCodeText;
                 HTML_show.Text = retString;
               
-                return statusCodeText;
+                return retString;
             }
             catch (WebException e)
             {
@@ -237,6 +294,7 @@ namespace WEB_CW1_SC_ZIHAO_LI
         {
             if (e.Key == Key.Enter)
             {
+
                 loadWebPages(addrsBar.Text);
             }
         }
@@ -549,7 +607,7 @@ namespace WEB_CW1_SC_ZIHAO_LI
 
 
             //定义一个变量用来存读到的东西
-            string text = "";
+            string text =null;
             //用一个读出流去读里面的数据
             using (StreamReader reader = new StreamReader("Favorites.txt"))
             {
@@ -574,12 +632,170 @@ namespace WEB_CW1_SC_ZIHAO_LI
             {
                 writer.Write(text);
             }
-
+            MessageBox.Show("Favorites Item deleted");
 
         }
 
+        public static string localRote;
+        public static string eachline_show;
+        public static string localBulkRote;
 
 
+        public void bulkDownload()
+        {
+
+            eachline_show = "";
+            localRote = addrsBar.Text;
+            localBulkRote = "bulk.txt";
+            //string eachline_show;
+            if (localRote == localBulkRote)
+            {
+                if (File.Exists(localBulkRote))
+                {
+
+
+                    string lines;
+                    string eachline;
+                    //string eachline_show;
+                    using (StreamReader reader = new StreamReader(localBulkRote))
+                    {
+                        while ((lines = reader.ReadLine()) != null)
+                        {
+                            //string eachline_show;
+                            //Console.WriteLine(lines);
+                            string statCode = GetStatusCode(lines);
+                            //string bytes = Convert.ToString(Encoding.Default.GetBytes(GetHttpResponse(lines)));
+                            byte[] bytes = Encoding.Default.GetBytes(GetHttpResponse(lines));
+                            eachline = Convert.ToString(statCode + "   " + bytes.Length + "   " + lines + "\n");
+                            //Console.WriteLine(eachline);
+                            //Console.WriteLine(eachline);
+                            eachline_show += eachline;
+                        }
+                        HTML_show.Text = eachline_show;
+                        statusCodeText_show.Text = "/≥﹏≤ \\";
+                        //Console.WriteLine(eachline_show);
+                        //Console.WriteLine(eachline);
+                    }
+
+                }
+                else //if (!File.Exists(localBulkRote))
+                {
+
+                    FileStream fs1 = new FileStream(localBulkRote, FileMode.Create, FileAccess.Write);//创建写入文件                /
+                    File.SetAttributes(@localBulkRote, FileAttributes.Normal);
+                    StreamWriter sw = new StreamWriter(fs1);
+                    sw.WriteLine("https://www.google.com");//开始写入值
+                    sw.WriteLine("https://www.baidu.com");
+                    sw.WriteLine("www.hw.ac.uk");
+                    sw.WriteLine("https://www2.macs.hw.ac.uk/~zl2013/");
+                    sw.Close();
+                    fs1.Close();
+
+
+                    string lines;
+                    string eachline;
+                    //string eachline_show;
+                    using (StreamReader reader = new StreamReader(localBulkRote))
+                    {
+                        while ((lines = reader.ReadLine()) != null)
+                        {
+                            //string eachline_show;
+                            //Console.WriteLine(lines);
+                            string statCode = GetStatusCode(lines);
+                            //string bytes = Convert.ToString(Encoding.Default.GetBytes(GetHttpResponse(lines)));
+                            byte[] bytes = Encoding.Default.GetBytes(GetHttpResponse(lines));
+                            eachline = Convert.ToString(statCode + "   " + bytes.Length + "   " + lines + "\n");
+                            //Console.WriteLine(eachline);
+                            //Console.WriteLine(eachline);
+                            eachline_show += eachline;
+                        }
+                        HTML_show.Text = eachline_show;
+                        statusCodeText_show.Text = "/≥﹏≤ \\";
+                        //Console.WriteLine(eachline_show);
+                        //Console.WriteLine(eachline);
+                    }
+                }
+
+
+            }
+            else
+            {
+
+                if (File.Exists(localRote))
+                {
+                    string lines;
+                    string eachline;
+                    //string eachline_show;
+                    using (StreamReader reader = new StreamReader(localRote))
+                    {
+                        while ((lines = reader.ReadLine()) != null)
+                        {
+                            //string eachline_show;
+                            //Console.WriteLine(lines);
+                            string statCode = GetStatusCode(lines);
+                            //string bytes = Convert.ToString(Encoding.Default.GetBytes(GetHttpResponse(lines)));
+                            byte[] bytes = Encoding.Default.GetBytes(GetHttpResponse(lines));
+                            eachline = Convert.ToString(statCode + "   " + bytes.Length + "   " + lines + "\n");
+                            //Console.WriteLine(eachline);
+                            //Console.WriteLine(eachline);
+                            eachline_show += eachline;
+                        }
+                        HTML_show.Text = eachline_show;
+                        statusCodeText_show.Text = "/≥﹏≤ \\";
+                        //Console.WriteLine(eachline_show);
+                        //Console.WriteLine(eachline);
+                    }
+
+                }
+                else //if (!File.Exists(localBulkRote))
+                {
+                    FileStream fs1 = new FileStream(localRote, FileMode.Create, FileAccess.Write);//创建写入文件                /
+                    File.SetAttributes(localRote, FileAttributes.Normal);
+                    StreamWriter sw = new StreamWriter(fs1);
+                    sw.WriteLine("www.hw.ac.uk");
+                    sw.Close();
+                    fs1.Close();
+
+
+                    string lines;
+                    string eachline;
+                    //string eachline_show;
+                    using (StreamReader reader = new StreamReader(localRote))
+                    {
+                        while ((lines = reader.ReadLine()) != null)
+                        {
+                            //string eachline_show;
+                            //Console.WriteLine(lines);
+                            string statCode = GetStatusCode(lines);
+                            //string bytes = Convert.ToString(Encoding.Default.GetBytes(GetHttpResponse(lines)));
+                            byte[] bytes = Encoding.Default.GetBytes(GetHttpResponse(lines));
+                            eachline = Convert.ToString(statCode + "   " + bytes.Length + "   " + lines + "\n");
+                            //Console.WriteLine(eachline);
+                            //Console.WriteLine(eachline);
+                            eachline_show += eachline;
+                        }
+                        HTML_show.Text = eachline_show;
+                        statusCodeText_show.Text = "file generate success,/≥﹏≤ \\";
+                        //Console.WriteLine(eachline_show);
+                        //Console.WriteLine(eachline);
+                    }
+
+                    
+                  //  statusCodeText_show.Text = "file generate success,/≥﹏≤ \\";
+
+
+                }
+
+            }
+        }
+    
+
+        private void bulk_download(object sender, RoutedEventArgs e)
+        {
+
+        bulkDownload();
+
+        }
     }
 }
  
