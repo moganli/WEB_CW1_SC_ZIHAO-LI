@@ -18,6 +18,7 @@ using System.Net;
 using System.IO;
 using System.Collections.Specialized;
 using System.Text.RegularExpressions;
+using System.Xml;
 
 namespace WEB_CW1_SC_ZIHAO_LI
 {
@@ -42,15 +43,16 @@ namespace WEB_CW1_SC_ZIHAO_LI
 
         private String getWebTitle(String url)
         {
-            WebRequest wb;
+            HttpWebRequest request;
+            //WebRequest wb;
             if (url.Contains("https://"))
             {
-                 wb = WebRequest.Create(url.Trim());
+                request = (HttpWebRequest)WebRequest.Create(url);
             }
             //WebRequest wb = WebRequest.Create(url.Trim());
             else
             {
-                 wb = WebRequest.Create("https://" + url.Trim());
+                request = (HttpWebRequest)WebRequest.Create("https://" + url.Trim());
             }
 
             WebResponse webRes = null;
@@ -58,7 +60,7 @@ namespace WEB_CW1_SC_ZIHAO_LI
             Stream webStream = null;
             try
             {
-                webRes = wb.GetResponse();
+                webRes = request.GetResponse();
                 webStream = webRes.GetResponseStream();
             }
             catch (Exception e)
@@ -105,7 +107,7 @@ namespace WEB_CW1_SC_ZIHAO_LI
 
             String regex = @"<title>.+</title>";
 
-            String title = Regex.Match(sb.ToString(), regex).ToString();
+            string title = Regex.Match(sb.ToString(), regex).ToString();
             title = Regex.Replace(title, @"[\""]+", "");
             title = Regex.Replace(title, @"<title>", "");
             title = Regex.Replace(title, @"</title>", "");
@@ -132,7 +134,7 @@ namespace WEB_CW1_SC_ZIHAO_LI
                     break;
             }*/
 
-            title = title + "                   statusCode:"+ statusCodeNUMBER;
+            title = title + "       statusCode:"+ statusCodeNUMBER;
 
             return title;
         }
@@ -190,10 +192,7 @@ namespace WEB_CW1_SC_ZIHAO_LI
             }
             catch (WebException e)
             {
-                
-             
                 statusCodeText_show.Text = e.Message;
-
                 HTML_show.Text = "/≥﹏≤ \\";
                 return e.Message;
                 // return "GET requext fail";
@@ -217,6 +216,7 @@ namespace WEB_CW1_SC_ZIHAO_LI
             historyItem.Width = 280;
 
             HistoryMenu.Items.Add(historyItem);
+            writeTxtHistory(link);
 
             if (saveToHistory)
             {
@@ -271,7 +271,7 @@ namespace WEB_CW1_SC_ZIHAO_LI
 
         private void home(object sender, RoutedEventArgs e)
         {
-            loadWebPages(HomePage);
+            loadWebPages(readHomePage());
         }
 
         private void window_loaded(object sender, RoutedEventArgs e)
@@ -280,9 +280,6 @@ namespace WEB_CW1_SC_ZIHAO_LI
             loadWebPages(defaultPage);
 
         }
-
-
-
 
 
         private void HistoryItem_Click(object sender, RoutedEventArgs e)
@@ -294,12 +291,236 @@ namespace WEB_CW1_SC_ZIHAO_LI
         {
             if (WebPage.Count != 0)
             {
-                HistoryMenu.PlacementTarget = HistoryButton;
+                HistoryMenu.PlacementTarget = HistoryButton;//init position at button
                 HistoryMenu.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom;
                 HistoryMenu.HorizontalOffset = -10;
                 HistoryMenu.IsOpen = true;
             }
+
         }
+
+
+        //home page setting
+        //public void homePageSet_KeyDown(object sender, KeyEventArgs e)
+        //{
+
+        //   string hPurl= homePageSet.Text;
+        //   writeTxtHomePage(hPurl);
+
+        //}
+
+        private void HomePageSet(object sender, RoutedEventArgs e)
+        {
+            string hPurl = addrsBar.Text;
+            writeTxtHomePage(hPurl);
+            MessageBox.Show("home page set to :"+hPurl);
+        }
+
+
+        public void writeTxtHomePage(string hPurl)
+        {            //判断是否已经有了这个文件
+            if (!File.Exists("HomePage.txt"))
+            {
+                //没有则创建这个文件
+                FileStream fs1 = new FileStream("HomePage.txt", FileMode.Create, FileAccess.Write);//创建写入文件                /
+                File.SetAttributes(@"HomePage.txt", FileAttributes.Normal);
+                StreamWriter sw = new StreamWriter(fs1);
+                sw.WriteLine(hPurl.Trim());//开始写入值
+                sw.Close();
+                fs1.Close();
+                
+            }
+            else
+            {
+                FileStream fs = new FileStream("HomePage.txt", FileMode.Open, FileAccess.Write);
+                File.SetAttributes(@"HomePage.txt", FileAttributes.Normal);
+                StreamWriter sr = new StreamWriter(fs);
+                sr.WriteLine(hPurl.Trim() );//开始写入值
+                sr.Close();
+                fs.Close();
+                
+            }
+
+        }
+
+        public string readHomePage()
+        {
+
+            if (File.Exists("HomePage.txt"))
+            {
+                string lines = File.ReadAllText("HomePage.txt", Encoding.Default);
+                return lines;
+
+            }
+            else
+            {
+                return HomePage;
+            }
+        }
+
+
+
+
+
+
+        public void writeTxtHistory(string hPurl)
+        {            //判断是否已经有了这个文件
+            if (!File.Exists("History.txt"))
+            {
+                //没有则创建这个文件
+                FileStream fs1 = new FileStream("History.txt", FileMode.Create, FileAccess.Write);//创建写入文件                /
+                File.SetAttributes(@"History.txt", FileAttributes.Normal);
+                StreamWriter sw = new StreamWriter(fs1);
+                sw.WriteLine(hPurl.Trim());//开始写入值
+                sw.Close();
+                fs1.Close();
+
+            }
+            else
+            {
+                FileStream fs = new FileStream("History.txt", FileMode.Open, FileAccess.Write);
+                File.SetAttributes(@"History.txt", FileAttributes.Normal);
+                StreamWriter sr = new StreamWriter(fs);
+                sr.WriteLine(hPurl.Trim());//开始写入值
+                sr.Close();
+                fs.Close();
+
+            }
+
+        }
+
+        public string readHistory()
+        {
+
+            if (File.Exists("History.txt"))
+            {
+                string lines = File.ReadAllText("HomePageHistorytxt", Encoding.Default);
+                return lines;
+
+            }
+            else
+            {
+                return HomePage;
+            }
+        }
+
+
+        private void addFavorites(object sender, RoutedEventArgs e)
+        {
+            string aFurl = addrsBar.Text;
+            //string aFtitle = getWebTitle(addrsBar.Text);
+            //addFavoritesXml( aFurl);
+            MenuItem FavoritesItem = new MenuItem();
+            FavoritesItem.Click += FavoritesItem_Click;
+            FavoritesItem.Header = aFurl;
+            FavoritesItem.Width = 280;
+
+            FavoritesMenu.Items.Add(FavoritesItem);
+
+            MessageBox.Show("add success :" + aFurl);
+
+        }
+
+
+        //public static void CreateXmlFile( string u)
+        //{
+        //    XmlDocument doc = new XmlDocument();
+        //    //2、创建第一行描述信息
+        //    XmlDeclaration dec = doc.CreateXmlDeclaration("1.0", "utf-8", null);
+        //    //3、将创建的第一行描述信息添加到文档中
+        //    doc.AppendChild(dec);
+        //    //4、给文档添加根节点
+        //    XmlElement item = doc.CreateElement("item");
+        //    doc.AppendChild(item);
+
+
+        //    XmlElement url = doc.CreateElement("url");
+        //    url.InnerText = u;
+        //    item.AppendChild(url);
+
+
+
+        //    doc.Save("Favorites.xml");
+        //    //Console.WriteLine("保存成功！");
+        //   // Console.ReadKey();
+        //}
+
+        //public static void addFavoritesXml( string u)
+        //{
+        //    XmlDocument doc = new XmlDocument();
+        //    
+        //    if (File.Exists("Favorites.xml"))
+        //    {
+        //        
+        //        doc.Load("Favorites.xml");
+        //        
+        //        XmlElement item = doc.DocumentElement;
+
+        //        XmlElement url = doc.CreateElement("url");
+        //        url.InnerText = u;
+        //        item.AppendChild(url);
+        //        doc.Save("Favorites.xml");
+        //    }
+        //    else
+        //    {
+        //        CreateXmlFile(u);
+        //    }
+            
+        //    //Console.WriteLine("Favorites.xml success");
+        //}
+
+        private void FavoritesItem_Click(object sender, RoutedEventArgs e)
+        {
+            MenuItem FavoritesItem = (MenuItem)sender;
+            loadWebPages(FavoritesItem.Header.ToString());
+        }
+        private void Favorites_Click(object sender, RoutedEventArgs e)
+        {
+               // readXml();
+         
+                FavoritesMenu.PlacementTarget = FavoritesButton;//init position at button
+                FavoritesMenu.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom;
+                FavoritesMenu.HorizontalOffset = -10;
+                FavoritesMenu.IsOpen = true;
+            
+
+        }
+
+
+        //public  void readXml()
+        //{
+        //    if (File.Exists("Favorites.xml"))
+        //    {
+        //        XmlDocument doc = new XmlDocument();
+        //        doc.Load("Favorites.xml");
+        //        
+        //        XmlElement itemElement = doc.DocumentElement;
+        //        XmlNodeList orderChildr = itemElement.ChildNodes;
+        //        foreach (XmlNode item in orderChildr)
+        //        {
+        //            FavoritesMenu.Items.Add(item.InnerText);
+        //            //item.InnerText;
+        //        }
+        //        //XmlElement orderitem = orderElement["Items"];
+        //        //XmlNodeList itemlist = orderitem.ChildNodes;
+        //        //foreach (XmlNode item in itemlist)
+        //        //{
+        //        //    Console.WriteLine(item.Attributes["Name"].Value + " " + item.Attributes["Count"].Value);
+        //        //}
+        //    }
+        //    else
+        //    {
+              
+        //            //Console.WriteLine("文件不存在！");
+        //    }
+        //    //Console.ReadKey();
+        //    // doc.Save("Student.xml");
+        //    //Console.WriteLine("Student.xml 保存成功");
+        //}
+
+
+
+
     }
 }
  

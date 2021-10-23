@@ -9,14 +9,18 @@
         mc:Ignorable="d"
         Title="morgan's browser" Height="500" Width="800" Loaded="window_loaded">
 
-    <!--
+
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="30"></RowDefinition>
+            <RowDefinition Height="30"></RowDefinition>
+
             <RowDefinition Height="*"></RowDefinition>
 
         </Grid.RowDefinitions>
         <Border BorderThickness="1" Background="Gray"/>
+
         <Grid  Grid.Row="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="40"/>
@@ -25,80 +29,48 @@
                 <ColumnDefinition Width="40"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="40"/>
-            </Grid.ColumnDefinitions>
-            <Button Content="←" Grid.Column="0" Width="40px" Height="30px" BorderThickness="0" Foreground="Black" FontSize="20" Click="backWebPage"/>
-            <Button Content="→" Grid.Column="1" Width="40px" Height="30px" BorderThickness="0" Foreground="Black" FontSize="20" Click="forwardWebPage"/>
-            <Button Content=" ⌂" Grid.Column="2" Width="40px" Height="30px" BorderThickness="0" Foreground="Black" FontSize="20" Click="home" HorizontalAlignment="Left"/>
-            <Button Content="⟳" Grid.Column="3" Width="40px" Height="30px" BorderThickness="0" Foreground="Black" FontSize="20"  Click="reFresh"/>
-
-            <TextBox Grid.Column="4" Background="LightCyan" Foreground="Black" FontSize="21" FontWeight="Bold" Text="https://www2.macs.hw.ac.uk/~zl2013/" Margin="4 0 4 0" x:Name="addrsBar" KeyDown="addrsBar_KeyDown"/>
-
-            <Button Content="H" Grid.Column="5" Width="40px" Height="30px" BorderThickness="0" Foreground="Black" FontSize="15" Click="History_Click" x:Name="HistoryButton">
-                <Button.ContextMenu>
-                    <ContextMenu x:Name="HistoryMenu"></ContextMenu>
-                </Button.ContextMenu>
-
-            </Button>
-
-        </Grid>
-    
-        <cefSharp:ChromiumWebBrowser Grid.Row="1" x:Name="Chrome" Address="google.com"></cefSharp:ChromiumWebBrowser>
-      
-    </Grid>
-    
-
--->
-
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="30"></RowDefinition>
-            <RowDefinition Height="40"></RowDefinition>
-            <RowDefinition Height="*"></RowDefinition>
-
-        </Grid.RowDefinitions>
-        <Border BorderThickness="1" Background="Gray"/>
-       
-        <Grid  Grid.Row="0">
-            <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="40"/>
                 <ColumnDefinition Width="40"/>
-                <ColumnDefinition Width="40"/>
-                <ColumnDefinition Width="40"/>
-                <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="40"/>
             </Grid.ColumnDefinitions>
-            <Button Content="←" Grid.Column="0" Width="40px" Height="30px" BorderThickness="0" Foreground="Black" FontSize="20" Click="backWebPage"/>
-            <Button Content="→" Grid.Column="1" Width="40px" Height="30px" BorderThickness="0" Foreground="Black" FontSize="20" Click="forwardWebPage"/>
-            <Button Content=" ⌂" Grid.Column="2" Width="40px" Height="30px" BorderThickness="0" Foreground="Black" FontSize="20" Click="home" HorizontalAlignment="Left"/>
-            <Button Content="⟳" Grid.Column="3" Width="40px" Height="30px" BorderThickness="0" Foreground="Black" FontSize="20"  Click="reFresh"/>
-
-            <TextBox Grid.Column="4" Background="LightCyan" Foreground="Black" FontSize="21" FontWeight="Bold" Text="https://www2.macs.hw.ac.uk/~zl2013/" Margin="4 0 4 0" x:Name="addrsBar" KeyDown="addrsBar_KeyDown"/>
-
-            <Button Content="⏱️" Grid.Column="5" Width="40px" Height="30px" BorderThickness="0" Foreground="Black" FontSize="15" Click="History_Click" x:Name="HistoryButton">
+            <Button Content="←" Grid.Column="0" Width="40px" Height="28px" BorderThickness="0" Foreground="Black" FontSize="20" Click="backWebPage"/>
+            <Button Content="→" Grid.Column="1" Width="40px" Height="28px" BorderThickness="0" Foreground="Black" FontSize="20" Click="forwardWebPage"/>
+            <Button Content="⌂" Grid.Column="2" Width="40px" Height="28px" BorderThickness="0" Foreground="Black" FontSize="20" Click="home" HorizontalAlignment="Left"/>
+            <Button Content="⟳" Grid.Column="3" Width="40px" Height="28px" BorderThickness="0" Foreground="Black" FontSize="20"  Click="reFresh"/>
+            <TextBox Grid.Column="4" Background="LightCyan" Foreground="Black" FontSize="21" FontWeight="Bold" Text="https://www2.macs.hw.ac.uk/~zl2013/" Margin="4,0,5,0" x:Name="addrsBar" KeyDown="addrsBar_KeyDown"/>
+            <Button Content="➕" Grid.Column="5" Width="40px" Height="28px" BorderThickness="0" Foreground="Black" FontSize="20"  Click="addFavorites"/>
+            <Button Content="⚙️" Grid.Column="6" Width="40px" Height="28px" BorderThickness="0" Foreground="Black" FontSize="20" Click="HomePageSet" />
+            <Button Content="💗" Grid.Column="7" Width="40px" Height="28px" BorderThickness="0" Foreground="Black" FontSize="20" Click="Favorites_Click" x:Name="FavoritesButton">
                 <Button.ContextMenu>
-                    <ContextMenu Width="300px" x:Name="HistoryMenu"></ContextMenu>
+                    <ContextMenu Width="300px" x:Name="FavoritesMenu"></ContextMenu>
                 </Button.ContextMenu>
-
+            </Button>
+            <Button Content="⏱️" Grid.Column="8" Height="28px" BorderThickness="0" Foreground="Black" FontSize="15" Click="History_Click" x:Name="HistoryButton">
+                <Button.ContextMenu>
+                     <ContextMenu Width="300px" x:Name="HistoryMenu"></ContextMenu>
+                </Button.ContextMenu>
             </Button>
 
-        </Grid>
-        
-        <Grid  Grid.Row="1">
             
+            
+            
+        </Grid>
 
+        <Grid  Grid.Row="1">
             <Border BorderThickness="0.5" BorderBrush="Gray">
                 <TextBlock TextAlignment="Center" Height="30PX" x:Name="statusCodeText_show" FontSize="20" TextWrapping="Wrap"></TextBlock>
             </Border>
         </Grid>
 
-        <Grid Grid.Row="2">
-
-
+        
+        
+        
+        <Grid Grid.Row="3">
             <ScrollViewer  HorizontalAlignment="Center" VerticalAlignment="Top" Width="auto" Height="auto" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" >
-                
+
                 <TextBlock  Width="auto" x:Name="HTML_show"  FontSize="20" TextWrapping="Wrap" >waiting for input url</TextBlock>
             </ScrollViewer>
-            
+
 
 
             <!--
