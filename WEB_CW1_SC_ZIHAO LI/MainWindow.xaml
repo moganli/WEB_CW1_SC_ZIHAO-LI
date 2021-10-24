@@ -34,7 +34,7 @@
             </Grid.ColumnDefinitions>
             <Button Content="←" Grid.Column="0" Width="40px" Height="28px" BorderThickness="0" Foreground="Black" FontSize="20" Click="backWebPage"/>
             <Button Content="→" Grid.Column="1" Width="40px" Height="28px" BorderThickness="0" Foreground="Black" FontSize="20" Click="forwardWebPage"/>
-            <Button Content="⌂" Grid.Column="2" Width="40px" Height="28px" BorderThickness="0" Foreground="Black" FontSize="20" Click="home" HorizontalAlignment="Left"/>
+            <Button Content="⌂" Grid.Column="2" Width="40px" Height="28px" BorderThickness="0" Foreground="Black" FontSize="20"  MouseRightButtonDown="delehome" Click="home" HorizontalAlignment="Left" x:Name="homeButton"/>
             <Button Content="⟳" Grid.Column="3" Width="40px" Height="28px" BorderThickness="0" Foreground="Black" FontSize="20"  Click="reFresh"/>
             <TextBox Grid.Column="4" Background="LightCyan" Foreground="Black" FontSize="21" FontWeight="Bold" Text="https://www2.macs.hw.ac.uk/~zl2013/" Margin="4,0,5,0" x:Name="addrsBar" KeyDown="addrsBar_KeyDown"/>
             <Button Content="➕" Grid.Column="5" Width="40px" Height="28px" BorderThickness="0" Foreground="Black" FontSize="20"  Click="addFavorites"/>
@@ -76,7 +76,7 @@
         <Grid Grid.Row="2">
             <ScrollViewer  HorizontalAlignment="Center" VerticalAlignment="Top" Width="auto" Height="auto" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" >
 
-                <TextBlock  Width="auto" x:Name="HTML_show"  FontSize="20" TextWrapping="Wrap" >waiting for input url</TextBlock>
+                <TextBlock   Width="auto" x:Name="HTML_show"  FontSize="20" TextWrapping="Wrap" >waiting for input url</TextBlock>
             </ScrollViewer>
 
 
@@ -87,4 +87,34 @@
         </Grid>
     </Grid>
 
+
+    <Window.Resources>
+        <RoutedCommand x:Key="refreshKey"></RoutedCommand>
+        <RoutedCommand x:Key="forwardKey"></RoutedCommand>
+        <RoutedCommand x:Key="backKey"></RoutedCommand>
+        <RoutedCommand x:Key="homeKey"></RoutedCommand>
+        <RoutedCommand x:Key="historyKey"></RoutedCommand>
+        <RoutedCommand x:Key="FavoritesKey"></RoutedCommand>
+
+    </Window.Resources>
+    
+    <Window.CommandBindings>
+        <CommandBinding Command="{StaticResource refreshKey}" Executed="refreshKey_Executed"/>
+        <CommandBinding Command="{StaticResource backKey}" Executed="backKey_Executed"/>
+        <CommandBinding Command="{StaticResource homeKey}" Executed="homeKey_Executed"/>
+        <CommandBinding Command="{StaticResource forwardKey}" Executed="forwardKey_Executed"/>
+        <CommandBinding Command="{StaticResource historyKey}" Executed="historyKey_Executed"/>
+        <CommandBinding Command="{StaticResource FavoritesKey}" Executed="FavoritesKey_Executed"/>
+    </Window.CommandBindings>
+
+    <Window.InputBindings>
+        <KeyBinding Gesture="F5" Command="{StaticResource refreshKey}"></KeyBinding>
+        <KeyBinding Gesture="F2" Command="{StaticResource backKey}"></KeyBinding>
+        <KeyBinding Gesture="F3" Command="{StaticResource forwardKey}"></KeyBinding>
+        <KeyBinding Gesture="F4" Command="{StaticResource homeKey}"></KeyBinding>
+        <KeyBinding Gesture="ctrl+h" Command="{StaticResource historyKey}"></KeyBinding>
+        <KeyBinding Gesture="ctrl+f" Command="{StaticResource FavoritesKey}"></KeyBinding>
+
+    </Window.InputBindings>
+    
 </Window>

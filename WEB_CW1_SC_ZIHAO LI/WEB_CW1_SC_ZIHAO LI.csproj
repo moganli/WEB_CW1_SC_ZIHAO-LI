@@ -6,6 +6,7 @@
     <RootNamespace>WEB_CW1_SC_ZIHAO_LI</RootNamespace>
     <UseWPF>true</UseWPF>
     <Platforms>AnyCPU;x64</Platforms>
+    <ApplicationIcon>morganbrowser.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
