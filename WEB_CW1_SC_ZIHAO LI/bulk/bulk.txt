@@ -1,4 +1,0 @@
-www.baidu.com
-www.google.com
-www2.macs.hw.ac.uk/~zl2013/
-https://www.kaggle.com/deeksharai/heart-attack-prediction-accuracy-90

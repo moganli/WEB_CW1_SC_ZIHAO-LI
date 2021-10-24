@@ -54,7 +54,7 @@ namespace WEB_CW1_SC_ZIHAO_LI
         }
         public static string useNoneHttoUrl(string url)
         {
-            return "https://" + url;
+            return "http://" + url;
         }
         private static string chooseUrl(string url, useDelegate chooseUrl)
         {
@@ -75,7 +75,7 @@ namespace WEB_CW1_SC_ZIHAO_LI
             //WebRequest wb;
             bool choose;
 
-            if (url.Contains("https://"))
+            if (url.Contains("http://") || url.Contains("https://"))
             {
                 url=chooseUrl(url, useUrl);
                 choose = true;
@@ -193,7 +193,7 @@ namespace WEB_CW1_SC_ZIHAO_LI
             HttpWebRequest request;
             try
             {
-                if (url.Contains("https://"))
+                if (url.Contains("http://")||url.Contains("https://"))
                 {
                     request = (HttpWebRequest)WebRequest.Create(url);
                     request.Method = "GET";
@@ -205,7 +205,7 @@ namespace WEB_CW1_SC_ZIHAO_LI
                 else
                 {
 
-                    request = (HttpWebRequest)WebRequest.Create("https://" + url);
+                    request = (HttpWebRequest)WebRequest.Create("http://" + url);
                     request.Method = "GET";
                     request.ContentType = "text/html;charset=UTF-8";
                     request.UserAgent = null;
@@ -296,7 +296,7 @@ namespace WEB_CW1_SC_ZIHAO_LI
             string statusCodeText = null;
             try
             {
-                if (url.Contains("https://"))
+                if (url.Contains("http://") || url.Contains("https://"))
                 {
                     request = (HttpWebRequest)WebRequest.Create(url);
                     request.Method = "GET";
@@ -309,7 +309,7 @@ namespace WEB_CW1_SC_ZIHAO_LI
                 {
                     try
                     {
-                        request = (HttpWebRequest)WebRequest.Create("https://" + url);
+                        request = (HttpWebRequest)WebRequest.Create("http://" + url);
                         request.Method = "GET";
                         request.ContentType = "text/html;charset=UTF-8";
                         request.UserAgent = null;
