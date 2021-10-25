@@ -8,8 +8,6 @@ using System.Net;
 using System.IO;
 using System.Text.RegularExpressions;
 
-
-
 namespace WEB_CW1_SC_ZIHAO_LI
 {
     /// <summary>
@@ -18,7 +16,7 @@ namespace WEB_CW1_SC_ZIHAO_LI
     public partial class MainWindow : Window
     {
         string HomePage = "https://www2.macs.hw.ac.uk/~zl2013/";
-        string defaultPage = "https://www.google.com";
+        string defaultPage = "http://www2.macs.hw.ac.uk/~zl2013/";
         List<string> WebPage=null;
         int Current = 0;
         int writeHistory = 0;
@@ -46,7 +44,7 @@ namespace WEB_CW1_SC_ZIHAO_LI
         }
 
 
-        //use advance lang features delegate------------------------------------------------------------------------------------------------------------------------------------------
+        //use advance lang features delegate------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         public delegate string useDelegate(string url);
         public static string useUrl(string url) 
         {
@@ -62,7 +60,7 @@ namespace WEB_CW1_SC_ZIHAO_LI
         }
 
 
-        //use advance lang features delegate-  and get status code and HTML code------------------------------------------------------------------------------------------------------
+        //use advance lang features delegate-  and get status code and HTML code------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
         //get windos title use <HttpWebRequest>-response, at first ,i implment delegate to choose to add "http://"
@@ -400,7 +398,7 @@ namespace WEB_CW1_SC_ZIHAO_LI
         }
 
 
-        //this method for load page，when enter key down or botton down，--------------------------------------------------------------------------------------------------------------------
+        //this method for load page，when enter key down or botton down，--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         //when load page, windos title change to web title use <getWebTitle>method
         //  creat menu ,every time load pages,add url to history menu item .and write to the TXT file for next time load program
         // if the pages is load by go back or goforward,then not add to webpage list
@@ -429,7 +427,7 @@ namespace WEB_CW1_SC_ZIHAO_LI
         }
 
 
-        //those are the  response events of left click, right click, or enter----------------------------------------------------------------------------------------------------------------
+        //those are the  response events of left click, right click, or enter----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
         //addrsBar key:Enter  load page use url in addrs bar
         private void addrsBar_KeyDown(object sender, KeyEventArgs e)
@@ -642,7 +640,7 @@ namespace WEB_CW1_SC_ZIHAO_LI
 
 
 
-        //home history favorites methods -------------------------------------------------------------------------------------------------------------------------------
+        //home history favorites methods -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         //creat file writehomepage,because homePage.txt always contain 1 url ,so always overwrite old one
         public void writeTxtHomePage(string hPurl)
         {            //file exists or not
@@ -915,9 +913,7 @@ namespace WEB_CW1_SC_ZIHAO_LI
 
 
 
-
-
-        //Shortcut key of 5 buttons
+        //Shortcut key of 5 buttons--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         //F5 for refresh
         private void refreshKey_Executed(object sender, ExecutedRoutedEventArgs e)
         {
@@ -998,6 +994,7 @@ namespace WEB_CW1_SC_ZIHAO_LI
             FavoritesMenu.IsOpen = true;
         }
        
+        
     }
 }
  
